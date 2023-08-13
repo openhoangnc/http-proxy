@@ -29,10 +29,19 @@ func getTargetUrl(orgUrl *url.URL) (*url.URL, error) {
 	return u, nil
 }
 
+var secret = os.Getenv("PROXY_SECRET")
+
 type OneHandler struct {
 }
 
 func (h *OneHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if secret != "" {
+		if r.Header.Get("X-Proxy-Secret") != secret {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+	}
+
 	targetUrl, err := getTargetUrl(r.URL)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
