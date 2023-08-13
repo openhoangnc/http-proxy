@@ -40,6 +40,7 @@ func (h *OneHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusForbidden)
 			return
 		}
+		r.Header.Del("X-Proxy-Secret")
 	}
 
 	targetUrl, err := getTargetUrl(r.URL)
